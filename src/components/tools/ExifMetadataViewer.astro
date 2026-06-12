@@ -1,0 +1,559 @@
+---
+---
+<div id="exif-viewer-root" class="w-full">
+
+  <!-- Upload Zone -->
+  <div id="exif-upload-zone" class="relative">
+    <div
+      id="exif-dropzone"
+      role="button"
+      tabindex="0"
+      aria-label="Upload image to view EXIF metadata"
+      class="border-2 border-dashed border-hairline rounded-xl p-10 md:p-16 text-center cursor-pointer transition-all duration-200 hover:border-link hover:bg-link/[0.02] focus:outline-none focus:ring-2 focus:ring-link focus:ring-offset-2 group"
+    >
+      <input
+        type="file"
+        id="exif-file-input"
+        accept=".jpg,.jpeg,.tiff,.tif,.heic,.heif"
+        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        aria-hidden="true"
+      />
+      <div class="flex flex-col items-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-canvas-soft border border-hairline flex items-center justify-center shadow-level-1 group-hover:border-link/30 transition-colors">
+          <svg class="w-7 h-7 text-mute" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-body-md-strong text-ink">Drop your photo here</p>
+          <p class="text-body-sm text-mute mt-1">or click to browse — JPEG, TIFF, HEIC supported</p>
+        </div>
+        <div class="flex items-center gap-2 text-caption text-mute bg-canvas-soft border border-hairline rounded-full px-3 py-1">
+          <svg class="w-3 h-3 text-success" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4"/></svg>
+          100% private — processed locally, never uploaded
+        </div>
+      </div>
+    </div>
+
+    <!-- Drag active overlay -->
+    <div id="exif-drag-overlay" class="hidden absolute inset-0 border-2 border-link bg-link/5 rounded-xl flex items-center justify-center pointer-events-none">
+      <p class="text-link font-semibold text-body-md">Release to analyze image</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div id="exif-error-state" class="hidden mt-6 bg-error-soft border border-error/20 rounded-lg p-4 flex items-start gap-3">
+    <svg class="w-5 h-5 text-error shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+    <div>
+      <p class="text-body-sm-strong text-error-deep" id="exif-error-title">Invalid file type</p>
+      <p class="text-body-sm text-error-deep/80 mt-0.5" id="exif-error-msg">Please upload a JPEG, TIFF, or HEIC image.</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div id="exif-loading-state" class="hidden mt-8 text-center py-12">
+    <div class="inline-flex items-center gap-3 text-body-sm text-body">
+      <svg class="w-5 h-5 text-link animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      Reading EXIF metadata locally…
+    </div>
+  </div>
+
+  <!-- Results Dashboard -->
+  <div id="exif-results" class="hidden mt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left Column: Preview + File Info -->
+      <div class="lg:col-span-4 space-y-4">
+        <!-- Image Thumbnail -->
+        <div class="bg-canvas border border-hairline rounded-xl overflow-hidden shadow-level-1">
+          <div class="aspect-square bg-canvas-soft flex items-center justify-center overflow-hidden">
+            <img id="exif-preview-img" src="" alt="Image preview" class="max-w-full max-h-full object-contain" />
+          </div>
+        </div>
+        <!-- Basic File Info Card -->
+        <div class="bg-canvas border border-hairline rounded-xl p-5 shadow-level-1">
+          <h2 class="text-caption-mono text-mute uppercase tracking-wider mb-4 font-mono">File Details</h2>
+          <dl id="exif-basic-info"></dl>
+        </div>
+      </div>
+
+      <!-- Right Column: Metadata Cards (Security & Privacy Dashboard style) -->
+      <div class="lg:col-span-8 space-y-4">
+
+        <!-- SECTION 1: METADATA SUMMARY CARD -->
+        <div id="exif-summary-card" class="bg-canvas border border-hairline rounded-xl p-6 shadow-level-1">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline pb-4 mb-4">
+            <div>
+              <h3 class="text-body-md-strong text-ink font-semibold">Metadata Analysis Complete</h3>
+              <p class="text-caption text-mute mt-0.5">Scanned fully client-side</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-caption-mono text-mute uppercase font-mono tracking-wider">Privacy Risk:</span>
+              <span id="exif-risk-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide border uppercase"></span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="flex flex-col gap-1">
+              <span class="text-caption-mono text-mute uppercase tracking-wider font-mono">Camera Data</span>
+              <span id="exif-status-camera" class="flex items-center gap-1.5 text-body-sm-strong mt-0.5"></span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-caption-mono text-mute uppercase tracking-wider font-mono">Location Data</span>
+              <span id="exif-status-location" class="flex items-center gap-1.5 text-body-sm-strong mt-0.5"></span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-caption-mono text-mute uppercase tracking-wider font-mono">Date Info</span>
+              <span id="exif-status-date" class="flex items-center gap-1.5 text-body-sm-strong mt-0.5"></span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-caption-mono text-mute uppercase tracking-wider font-mono">Exposure Info</span>
+              <span id="exif-status-exposure" class="flex items-center gap-1.5 text-body-sm-strong mt-0.5"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: PRIVACY INSIGHTS CARD -->
+        <div id="exif-insights-card" class="bg-canvas border border-hairline rounded-xl p-5 shadow-level-1">
+          <div class="flex items-start gap-3.5">
+            <div id="exif-insights-icon" class="mt-0.5 shrink-0"></div>
+            <div>
+              <h3 class="text-body-md-strong text-ink font-semibold">Privacy Analysis &amp; Insights</h3>
+              <p class="text-body-sm text-body leading-relaxed mt-1" id="exif-insights-desc"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty EXIF Notice -->
+        <div id="exif-no-data-notice" class="hidden bg-canvas border border-hairline rounded-xl p-6 shadow-level-1">
+          <div class="flex flex-col items-center text-center p-4">
+            <div class="w-12 h-12 rounded-full bg-warning-soft flex items-center justify-center mb-4 text-warning-deep">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 class="text-body-lg font-semibold text-ink">This image does not contain EXIF metadata</h3>
+            <p class="text-body-sm text-mute max-w-md mt-2">
+              Many social media platforms such as Instagram, WhatsApp, Facebook and X automatically remove metadata to improve privacy.
+            </p>
+            <button id="exif-empty-reset-btn" class="mt-6 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-pill font-medium hover:bg-ink/90 transition-colors text-body-sm">
+              Analyze Another Image
+            </button>
+          </div>
+        </div>
+
+        <!-- Location with Map -->
+        <div id="exif-location-card" class="hidden bg-canvas border border-hairline rounded-xl p-5 shadow-level-1">
+          <h2 class="text-caption-mono text-mute uppercase tracking-wider mb-4 font-mono">Location</h2>
+          <dl class="mb-4" id="exif-location-info"></dl>
+          <div id="exif-map-container" class="rounded-lg overflow-hidden border border-hairline mb-4" style="height:240px"></div>
+          <div class="flex flex-wrap gap-2">
+            <button id="exif-copy-coords-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-canvas border border-hairline rounded-sm text-body-sm text-ink hover:bg-canvas-soft-2 hover:border-hairline-strong focus:outline-none transition-colors" aria-label="Copy GPS coordinates">
+              <svg class="w-4 h-4 text-mute" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z" />
+              </svg>
+              Copy Coordinates
+            </button>
+            <a id="exif-gmaps-link" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-canvas border border-hairline rounded-sm text-body-sm text-ink hover:bg-canvas-soft-2 hover:border-hairline-strong transition-colors">
+              <svg class="w-4 h-4 text-mute" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+              Open in Google Maps
+            </a>
+            <a id="exif-osm-link" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-canvas border border-hairline rounded-sm text-body-sm text-ink hover:bg-canvas-soft-2 hover:border-hairline-strong transition-colors">
+              <svg class="w-4 h-4 text-mute" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+              Open in OpenStreetMap
+            </a>
+          </div>
+        </div>
+
+        <!-- No Location Notice -->
+        <div id="exif-no-location" class="hidden bg-canvas border border-hairline rounded-xl p-5 shadow-level-1">
+          <h2 class="text-caption-mono text-mute uppercase tracking-wider mb-3 font-mono">Location</h2>
+          <p class="text-body-sm text-body">No location information was found in this image.</p>
+        </div>
+
+        <!-- Camera Details -->
+        <div id="exif-camera-card" class="hidden bg-canvas border border-hairline rounded-xl p-5 shadow-level-1">
+          <h2 class="text-caption-mono text-mute uppercase tracking-wider mb-4 font-mono">Camera Details</h2>
+          <dl id="exif-camera-info"></dl>
+        </div>
+
+        <!-- Exposure -->
+        <div id="exif-exposure-card" class="hidden bg-canvas border border-hairline rounded-xl p-5 shadow-level-1">
+          <h2 class="text-caption-mono text-mute uppercase tracking-wider mb-4 font-mono">Exposure</h2>
+          <dl id="exif-exposure-info"></dl>
+        </div>
+
+        <!-- Date -->
+        <div id="exif-date-card" class="hidden bg-canvas border border-hairline rounded-xl p-5 shadow-level-1">
+          <h2 class="text-caption-mono text-mute uppercase tracking-wider mb-4 font-mono">Date & Time</h2>
+          <dl id="exif-date-info"></dl>
+        </div>
+
+        <!-- SECTION 6: QUICK ACTIONS -->
+        <div id="exif-quick-actions" class="bg-canvas border border-hairline rounded-xl p-6 shadow-level-1">
+          <h3 class="text-body-md-strong text-ink font-semibold mb-3">Privacy Actions</h3>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/privacy/exif-metadata-remover" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-pill font-medium hover:bg-ink/90 transition-colors text-body-sm w-full sm:w-auto">
+              Remove Metadata
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+            <button id="exif-reanalyze-btn" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-canvas border border-hairline text-ink rounded-pill font-medium hover:bg-canvas-soft-2 hover:border-hairline-strong transition-colors text-body-sm w-full sm:w-auto">
+              Analyze Another Image
+              <svg class="w-4 h-4 text-mute" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notifications layout -->
+<div id="exif-toast-container" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
+<style>
+  .exif-dt { font-size:12px; font-weight:500; color:#888; font-family:ui-monospace,monospace; text-transform:uppercase; letter-spacing:.04em; }
+  .exif-dd { font-size:14px; color:#171717; font-weight:400; }
+  .exif-row { display:flex; flex-direction:column; gap:1px; padding:8px 0; border-bottom:1px solid #ebebeb; }
+  .exif-row:last-child { border-bottom:none; padding-bottom:0; }
+  .exif-row:first-child { padding-top:0; }
+  
+  /* Toast animation */
+  .exif-toast {
+    animation: exif-toast-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes exif-toast-slide {
+    from { transform: translateY(12px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+</style>
+
+<script>
+(async () => {
+  const dropzone        = document.getElementById('exif-dropzone')!;
+  const fileInput       = document.getElementById('exif-file-input') as HTMLInputElement;
+  const dragOverlay     = document.getElementById('exif-drag-overlay')!;
+  const errorState      = document.getElementById('exif-error-state')!;
+  const errorTitle      = document.getElementById('exif-error-title')!;
+  const errorMsg        = document.getElementById('exif-error-msg')!;
+  const loadingState    = document.getElementById('exif-loading-state')!;
+  const results         = document.getElementById('exif-results')!;
+  const uploadZone      = document.getElementById('exif-upload-zone')!;
+  const previewImg      = document.getElementById('exif-preview-img') as HTMLImageElement;
+  const toastContainer  = document.getElementById('exif-toast-container')!;
+
+  const reanalyzeBtn    = document.getElementById('exif-reanalyze-btn')!;
+  const emptyResetBtn   = document.getElementById('exif-empty-reset-btn')!;
+  const copyCoordsBtn   = document.getElementById('exif-copy-coords-btn')!;
+
+  const ACCEPTED      = ['image/jpeg','image/tiff','image/heic','image/heif'];
+  const ACCEPTED_EXTS = ['.jpg','.jpeg','.tiff','.tif','.heic','.heif'];
+
+  let currentCoords: { lat: number; lon: number } | null = null;
+
+  function showToast(message: string) {
+    const toast = document.createElement('div');
+    toast.className = 'exif-toast bg-canvas border border-hairline-strong rounded-md p-3 shadow-level-4 flex items-center gap-2 pointer-events-auto min-w-[200px] text-body-sm text-ink';
+    toast.innerHTML = `
+      <svg class="w-4 h-4 text-success shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>${message}</span>
+    `;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.2s ease';
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 200);
+    }, 2800);
+  }
+
+  function showError(title: string, msg: string) {
+    errorTitle.textContent = title;
+    errorMsg.textContent   = msg;
+    errorState.classList.remove('hidden');
+    loadingState.classList.add('hidden');
+  }
+  function hideError() { errorState.classList.add('hidden'); }
+  function isValidFile(file: File): boolean {
+    const ext = '.' + file.name.split('.').pop()?.toLowerCase();
+    return ACCEPTED.includes(file.type) || ACCEPTED_EXTS.includes(ext);
+  }
+
+  // Drag events
+  ['dragenter','dragover','dragleave','drop'].forEach(ev => {
+    dropzone.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); });
+    document.body.addEventListener(ev, e => { e.preventDefault(); });
+  });
+  dropzone.addEventListener('dragenter', () => dragOverlay.classList.remove('hidden'));
+  dropzone.addEventListener('dragleave', () => dragOverlay.classList.add('hidden'));
+  dropzone.addEventListener('drop', (e: Event) => {
+    dragOverlay.classList.add('hidden');
+    const dt = (e as DragEvent).dataTransfer;
+    if (dt?.files?.length) processFile(dt.files[0]);
+  });
+  dropzone.addEventListener('keydown', (e: Event) => {
+    if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') fileInput.click();
+  });
+  fileInput.addEventListener('change', function() {
+    if (this.files?.length) processFile(this.files[0]);
+  });
+
+  const resetUI = () => {
+    results.classList.add('hidden');
+    uploadZone.classList.remove('hidden');
+    hideError();
+    fileInput.value = '';
+    previewImg.src  = '';
+    currentCoords   = null;
+  };
+  reanalyzeBtn.addEventListener('click', resetUI);
+  emptyResetBtn.addEventListener('click', resetUI);
+
+  copyCoordsBtn.addEventListener('click', () => {
+    if (currentCoords) {
+      const coordsText = `${currentCoords.lat.toFixed(6)}, ${currentCoords.lon.toFixed(6)}`;
+      navigator.clipboard.writeText(coordsText).then(() => {
+        showToast('Coordinates copied to clipboard');
+      }).catch(() => {
+        showToast('Failed to copy coordinates');
+      });
+    }
+  });
+
+  function row(label: string, value: string): string {
+    return `<div class="exif-row"><dt class="exif-dt">${label}</dt><dd class="exif-dd">${value}</dd></div>`;
+  }
+  function formatBytes(b: number): string {
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+    return (b/1048576).toFixed(2) + ' MB';
+  }
+  function formatShutter(v: number): string {
+    if (v >= 1) return v + 's';
+    return `1/${Math.round(1/v)}s`;
+  }
+  function formatDate(raw: unknown): string {
+    try {
+      let d: Date;
+      if (raw instanceof Date) { d = raw; }
+      else if (typeof raw === 'string') {
+        d = new Date(raw.replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3'));
+      } else { return String(raw); }
+      if (isNaN(d.getTime())) return String(raw);
+      return d.toLocaleString('en-US', { year:'numeric', month:'long', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
+    } catch { return String(raw); }
+  }
+  function setCard(cardId: string, dlId: string, rows: string[]) {
+    const card = document.getElementById(cardId)!;
+    const dl   = document.getElementById(dlId)!;
+    if (rows.length) { dl.innerHTML = rows.join(''); card.classList.remove('hidden'); }
+    else { card.classList.add('hidden'); }
+  }
+
+  async function processFile(file: File) {
+    hideError();
+    if (!isValidFile(file)) {
+      showError('Unsupported file type', 'Please upload a JPEG, TIFF, or HEIC image file.');
+      return;
+    }
+    uploadZone.classList.add('hidden');
+    loadingState.classList.remove('hidden');
+
+    const objectUrl = URL.createObjectURL(file);
+    previewImg.src  = objectUrl;
+
+    let exif: Record<string, unknown> = {};
+    try {
+      const mod  = await import('https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.esm.js' as any);
+      const exifr = mod.default || mod;
+      const parsed = await exifr.parse(file, { gps:true, tiff:true, xmp:false, icc:false, iptc:false, jfif:false });
+      exif = parsed || {};
+    } catch { exif = {}; }
+
+    loadingState.classList.add('hidden');
+    results.classList.remove('hidden');
+
+    // Basic info
+    const img = new Image();
+    img.src   = objectUrl;
+    await new Promise(r => { img.onload = r; img.onerror = r; });
+
+    const basicRows = [
+      row('File Name', file.name),
+      row('File Size', formatBytes(file.size)),
+      row('Image Type', file.type || 'Unknown'),
+    ];
+    if (img.naturalWidth)  basicRows.push(row('Width',  `${exif.ImageWidth  || img.naturalWidth}px`));
+    if (img.naturalHeight) basicRows.push(row('Height', `${exif.ImageHeight || img.naturalHeight}px`));
+    document.getElementById('exif-basic-info')!.innerHTML = basicRows.join('');
+
+    // Camera
+    const cam: string[] = [];
+    if (exif.Make)      cam.push(row('Camera Make',  String(exif.Make)));
+    if (exif.Model)     cam.push(row('Camera Model', String(exif.Model)));
+    if (exif.LensModel) cam.push(row('Lens Model',   String(exif.LensModel)));
+    if (exif.Software)  cam.push(row('Software',     String(exif.Software)));
+    setCard('exif-camera-card', 'exif-camera-info', cam);
+
+    // Exposure
+    const exp: string[] = [];
+    if (exif.FNumber      !== undefined) exp.push(row('Aperture',      `ƒ/${Number(exif.FNumber).toFixed(1)}`));
+    if (exif.ExposureTime !== undefined) exp.push(row('Shutter Speed', formatShutter(Number(exif.ExposureTime))));
+    if (exif.ISO          !== undefined) exp.push(row('ISO',           `ISO ${exif.ISO}`));
+    if (exif.FocalLength  !== undefined) exp.push(row('Focal Length',  `${Number(exif.FocalLength).toFixed(0)}mm`));
+    if (exif.Flash        !== undefined) exp.push(row('Flash',         String(exif.Flash)));
+    setCard('exif-exposure-card', 'exif-exposure-info', exp);
+
+    // Date
+    const dates: string[] = [];
+    const dateOrig = exif.DateTimeOriginal || exif.DateTime || exif.DateTimeDigitized;
+    if (dateOrig) dates.push(row('Date Taken', formatDate(dateOrig)));
+    setCard('exif-date-card', 'exif-date-info', dates);
+
+    // Location
+    const lat = exif.latitude as number | undefined;
+    const lon = exif.longitude as number | undefined;
+    const noLoc    = document.getElementById('exif-no-location')!;
+    const locCard  = document.getElementById('exif-location-card')!;
+
+    if (lat !== undefined && lon !== undefined) {
+      currentCoords = { lat, lon };
+      noLoc.classList.add('hidden');
+      locCard.classList.remove('hidden');
+      const locRows = [row('Latitude', lat.toFixed(6) + '°'), row('Longitude', lon.toFixed(6) + '°')];
+      if (exif.GPSAltitude !== undefined) locRows.push(row('Altitude', `${Number(exif.GPSAltitude).toFixed(1)}m`));
+      document.getElementById('exif-location-info')!.innerHTML = locRows.join('');
+
+      // Setup external links
+      document.getElementById('exif-gmaps-link')!.setAttribute('href', `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`);
+      document.getElementById('exif-osm-link')!.setAttribute('href', `https://www.openstreetmap.org/#map=17/${lat}/${lon}`);
+
+      // Lazy-load Leaflet
+      const mapEl = document.getElementById('exif-map-container')!;
+      if (!document.getElementById('leaflet-css')) {
+        const lnk = document.createElement('link');
+        lnk.id   = 'leaflet-css';
+        lnk.rel  = 'stylesheet';
+        lnk.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(lnk);
+      }
+      const L = await import('https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js' as any);
+      mapEl.innerHTML = '';
+      const map = L.map(mapEl, { scrollWheelZoom:false }).setView([lat, lon], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+      }).addTo(map);
+      L.marker([lat, lon]).addTo(map);
+    } else {
+      currentCoords = null;
+      locCard.classList.add('hidden');
+      noLoc.classList.remove('hidden');
+    }
+
+    // Determine presence of data sections
+    const hasCamera   = cam.length > 0;
+    const hasLocation = lat !== undefined && lon !== undefined;
+    const hasDate     = dates.length > 0;
+    const hasExposure = exp.length > 0;
+    const hasAnyExif  = hasCamera || hasLocation || hasDate || hasExposure;
+
+    // Populating Metadata Summary Card
+    const statusHtml = (found: boolean) => found 
+      ? `<svg class="w-4 h-4 text-success shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg> <span class="text-success text-body-sm-strong">Found</span>`
+      : `<svg class="w-4 h-4 text-mute shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg> <span class="text-mute text-body-sm-strong">Not Found</span>`;
+
+    document.getElementById('exif-status-camera')!.innerHTML = statusHtml(hasCamera);
+    document.getElementById('exif-status-location')!.innerHTML = statusHtml(hasLocation);
+    document.getElementById('exif-status-date')!.innerHTML = statusHtml(hasDate);
+    document.getElementById('exif-status-exposure')!.innerHTML = statusHtml(hasExposure);
+
+    // Compute Privacy Risk
+    let risk: 'LOW' | 'MEDIUM' | 'HIGH' = 'LOW';
+    if (hasLocation) {
+      risk = 'HIGH';
+    } else if (hasDate && hasCamera) {
+      risk = 'MEDIUM';
+    }
+
+    const badge = document.getElementById('exif-risk-badge')!;
+    badge.textContent = risk + ' RISK';
+    badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide border uppercase ';
+    
+    if (risk === 'HIGH') {
+      badge.classList.add('bg-error-soft', 'text-error-deep', 'border-error/20');
+    } else if (risk === 'MEDIUM') {
+      badge.classList.add('bg-warning-soft', 'text-warning-deep', 'border-warning/20');
+    } else {
+      badge.classList.add('bg-canvas-soft-2', 'text-body', 'border-hairline');
+    }
+
+    // Populate Privacy Insights Card
+    const insightsDesc = document.getElementById('exif-insights-desc')!;
+    const insightsIcon = document.getElementById('exif-insights-icon')!;
+    const insightsCard = document.getElementById('exif-insights-card')!;
+
+    // Always keep cards visible to show complete scan status
+    insightsCard.classList.remove('hidden');
+    document.getElementById('exif-summary-card')!.classList.remove('hidden');
+    document.getElementById('exif-quick-actions')!.classList.remove('hidden');
+
+    if (!hasAnyExif) {
+      document.getElementById('exif-no-data-notice')!.classList.remove('hidden');
+      
+      // Metadata stripped state
+      insightsIcon.innerHTML = `
+        <div class="w-10 h-10 rounded-full bg-link-bg-soft flex items-center justify-center text-success">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      `;
+      insightsDesc.innerHTML = `<strong>Metadata stripped.</strong> This image appears to have had metadata removed already. Location information was not found in this image.`;
+    } else {
+      document.getElementById('exif-no-data-notice')!.classList.add('hidden');
+
+      if (risk === 'HIGH') {
+        insightsIcon.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-error-soft flex items-center justify-center text-error-deep">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+        `;
+        insightsDesc.innerHTML = `<strong>GPS coordinates detected.</strong> Anyone receiving this image may be able to determine exactly where this photo was taken. Consider using our <strong>Metadata Remover</strong> to strip this location data before sharing the photo online.`;
+      } else if (risk === 'MEDIUM') {
+        insightsIcon.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-warning-soft flex items-center justify-center text-warning-deep">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+        `;
+        insightsDesc.innerHTML = `<strong>Camera and Timestamp metadata found.</strong> While no precise GPS location was detected, the embedded timestamp and camera model still share identifiable details. If privacy is paramount, stripping these parameters before publishing is recommended.`;
+      } else {
+        insightsIcon.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-link-bg-soft flex items-center justify-center text-success">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        `;
+        insightsDesc.innerHTML = `<strong>No GPS detected.</strong> Location information was not found in this image. This image presents a very low privacy risk.`;
+      }
+    }
+  }
+})();
+</script>

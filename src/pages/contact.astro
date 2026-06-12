@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact Us | AutoAgenix" description="Get in touch with the AutoAgenix team for support, feature requests, or business inquiries.">
+  <div class="max-w-[1200px] mx-auto px-4 md:px-6 pt-24 pb-20">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+      
+      <!-- Left Column: Info & Contact Channels -->
+      <div class="lg:col-span-5 flex flex-col justify-between animate-fade-up">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-widest text-mute mb-3 block">Get in Touch</span>
+          <h1 class="text-display-lg md:text-[48px] font-semibold tracking-[-1.5px] text-ink mb-6">Contact Us.</h1>
+          <p class="text-body-lg text-body mb-12 max-w-md">
+            Have a question, feature request, or found a bug? We would love to hear from you. Send us a message or reach out through our direct channels.
+          </p>
+
+          <!-- Support Channels -->
+          <div class="space-y-8">
+            <div>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-mute mb-2 block">Direct Email</span>
+              <a 
+                href="mailto:work@autoagenix.com" 
+                class="text-body-lg text-ink font-semibold hover:text-link transition-colors border-b border-hairline hover:border-link pb-1"
+              >
+                work@autoagenix.com
+              </a>
+            </div>
+
+            <div>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-mute mb-2 block">Open Source Support</span>
+              <p class="text-body-sm text-body max-w-sm mb-3">
+                For bug reporting, feature tracking, or pull requests, please use our public repository.
+              </p>
+              <a 
+                href="https://github.com/autoagenix" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="text-body-sm-strong text-ink hover:text-link transition-colors inline-flex items-center gap-1.5"
+              >
+                Visit GitHub
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="text-mute"><path d="M2.5 6H9.5M9.5 6L6.5 3M9.5 6L6.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hidden lg:block text-xs font-mono text-mute pt-12 border-t border-hairline">
+          AutoAgenix · Built for secure client-side computing.
+        </div>
+      </div>
+
+      <!-- Right Column: Contact Form -->
+      <div class="lg:col-span-7 animate-fade-up delay-100">
+        <form 
+          class="space-y-6 bg-canvas p-8 md:p-10 rounded-xl shadow-level-3 border border-hairline relative overflow-hidden group/form" 
+          onsubmit="event.preventDefault(); alert('Message sent! (Mock)');"
+        >
+          <!-- Subtle dot grid & radial gradient decoration inside the card -->
+          <div class="absolute inset-0 grid-overlay opacity-[0.02] pointer-events-none"></div>
+          <div class="absolute -right-24 -top-24 w-96 h-96 bg-ink/[0.01] rounded-full blur-3xl pointer-events-none group-hover/form:bg-ink/[0.02] transition-colors duration-300"></div>
+
+          <div>
+            <label for="name" class="block text-body-sm-strong text-ink mb-2">Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              required 
+              placeholder="Your name"
+              class="w-full h-11 px-4 bg-canvas-soft border border-hairline rounded-md text-body-sm text-ink placeholder-mute hover:border-hairline-strong focus:outline-none focus:bg-canvas focus:border-ink focus:ring-4 focus:ring-ink/5 transition-all duration-200" 
+            />
+          </div>
+
+          <div>
+            <label for="email" class="block text-body-sm-strong text-ink mb-2">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              required 
+              placeholder="you@example.com"
+              class="w-full h-11 px-4 bg-canvas-soft border border-hairline rounded-md text-body-sm text-ink placeholder-mute hover:border-hairline-strong focus:outline-none focus:bg-canvas focus:border-ink focus:ring-4 focus:ring-ink/5 transition-all duration-200" 
+            />
+          </div>
+
+          <div>
+            <label for="message" class="block text-body-sm-strong text-ink mb-2">Message</label>
+            <textarea 
+              id="message" 
+              rows="5" 
+              required 
+              placeholder="How can we help?"
+              class="w-full px-4 py-3 bg-canvas-soft border border-hairline rounded-md text-body-sm text-ink placeholder-mute hover:border-hairline-strong focus:outline-none focus:bg-canvas focus:border-ink focus:ring-4 focus:ring-ink/5 transition-all duration-200 resize-y min-h-[120px]"
+            ></textarea>
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full h-11 bg-primary text-on-primary rounded-pill font-medium text-button-md hover:bg-ink/90 transition-all shadow-level-2 hover:scale-[1.01] active:scale-95 mt-2 flex items-center justify-center gap-2 group"
+          >
+            <span>Send Message</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transform group-hover:translate-x-1 transition-transform">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>

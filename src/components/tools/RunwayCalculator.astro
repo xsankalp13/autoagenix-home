@@ -1,0 +1,65 @@
+---
+---
+<div class="max-w-md mx-auto w-full">
+  <form id="runway-form" class="space-y-6">
+    <div>
+      <label for="cash" class="block text-body-sm-strong text-ink mb-2">Cash in Bank ($)</label>
+      <input type="number" id="cash" required min="0" step="0.01" placeholder="e.g. 500000" class="w-full h-10 px-3 bg-canvas border border-hairline rounded-sm focus:outline-none focus:border-link transition-colors" />
+    </div>
+    
+    <div>
+      <label for="burn" class="block text-body-sm-strong text-ink mb-2">Monthly Burn Rate ($)</label>
+      <input type="number" id="burn" required min="0.01" step="0.01" placeholder="e.g. 30000" class="w-full h-10 px-3 bg-canvas border border-hairline rounded-sm focus:outline-none focus:border-link transition-colors" />
+      <p class="text-caption text-mute mt-1">If profitable, runway is theoretically infinite.</p>
+    </div>
+
+    <button type="submit" class="w-full h-10 bg-primary text-on-primary rounded-pill font-medium hover:bg-ink/90 transition-colors">
+      Calculate Runway
+    </button>
+  </form>
+
+  <div id="result-container" class="mt-8 p-6 bg-canvas-soft border border-hairline rounded-md hidden">
+    <div class="text-caption text-mute font-mono uppercase tracking-wider mb-2">Estimated Runway</div>
+    <div id="result-value" class="text-display-lg font-semibold text-ink"></div>
+    <p id="result-message" class="text-body-sm text-body mt-2"></p>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('runway-form');
+  const cashInput = document.getElementById('cash') as HTMLInputElement;
+  const burnInput = document.getElementById('burn') as HTMLInputElement;
+  const resultContainer = document.getElementById('result-container');
+  const resultValue = document.getElementById('result-value');
+  const resultMessage = document.getElementById('result-message');
+
+  if (form && cashInput && burnInput && resultContainer && resultValue && resultMessage) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const cash = parseFloat(cashInput.value);
+      const burn = parseFloat(burnInput.value);
+      
+      if (isNaN(cash) || isNaN(burn) || burn <= 0) return;
+      
+      const runway = cash / burn;
+      const months = Math.floor(runway);
+      const days = Math.round((runway - months) * 30);
+      
+      resultContainer.classList.remove('hidden');
+      
+      resultValue.textContent = `${runway.toFixed(1)} Months`;
+      
+      if (runway < 6) {
+        resultValue.className = 'text-display-lg font-semibold text-error';
+        resultMessage.textContent = `Danger zone. Roughly ${months} months and ${days} days remaining.`;
+      } else if (runway < 12) {
+        resultValue.className = 'text-display-lg font-semibold text-warning';
+        resultMessage.textContent = `Caution. Roughly ${months} months and ${days} days remaining.`;
+      } else {
+        resultValue.className = 'text-display-lg font-semibold text-success';
+        resultMessage.textContent = `Healthy runway. Roughly ${months} months and ${days} days remaining.`;
+      }
+    });
+  }
+</script>

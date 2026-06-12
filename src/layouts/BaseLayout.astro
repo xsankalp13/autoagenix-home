@@ -1,0 +1,108 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEO from '../components/seo/SEO.astro';
+import type { Tool } from '../data/tools';
+import type { SchemaOrgEntity } from '../lib/seo/schema';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  twitterCard?: 'summary' | 'summary_large_image' | 'app' | 'player';
+  twitterSite?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: string;
+  robots?: string;
+  article?: {
+    publishedTime?: string;
+    author?: string;
+    section?: string;
+    tags?: string[];
+  };
+  tool?: Tool;
+  faqs?: { question: string; answer: string }[];
+  schemas?: SchemaOrgEntity[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogTitle,
+  ogDescription,
+  ogImage,
+  ogType,
+  twitterCard,
+  twitterSite,
+  twitterTitle,
+  twitterDescription,
+  twitterImage,
+  robots,
+  article,
+  tool,
+  faqs,
+  schemas,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <link class="favicon" rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO and OpenGraph -->
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogTitle={ogTitle}
+      ogDescription={ogDescription}
+      ogImage={ogImage}
+      ogType={ogType}
+      twitterCard={twitterCard}
+      twitterSite={twitterSite}
+      twitterTitle={twitterTitle}
+      twitterDescription={twitterDescription}
+      twitterImage={twitterImage}
+      robots={robots}
+      article={article}
+      tool={tool}
+      faqs={faqs}
+      schemas={schemas}
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+    </noscript>
+  </head>
+  <body class="bg-canvas-soft text-ink font-sans min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-1 w-full overflow-x-hidden pt-16">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

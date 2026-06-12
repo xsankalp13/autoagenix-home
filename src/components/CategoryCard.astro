@@ -1,0 +1,22 @@
+---
+interface Props {
+  category: { id: string; name: string; description: string };
+  toolCount: number;
+}
+
+const { category, toolCount } = Astro.props;
+---
+
+<a href={`/${category.id}`} class="block group bg-canvas rounded-lg p-8 border border-hairline shadow-level-1 hover:shadow-level-3 transition-all relative overflow-hidden">
+  <div class="absolute right-0 top-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-link/10 transition-colors"></div>
+  <div class="relative z-10">
+    <h3 class="text-display-md font-semibold text-ink mb-2">{category.name}</h3>
+    <p class="text-body-md text-body mb-6">{category.description}</p>
+    <div class="flex items-center text-body-sm font-medium text-link">
+      <span>{toolCount} Tools</span>
+      <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+</a>

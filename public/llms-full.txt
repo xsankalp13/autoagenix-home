@@ -1,0 +1,39 @@
+# AutoAgenix - Full Index
+> Complete inventory of privacy-first browser-based tools, categories, and articles.
+
+This file contains a detailed list of all resources on AutoAgenix. For a summary, see [llms.txt](https://autoagenix.com/llms.txt).
+
+## Categories
+
+* [Privacy Tools](https://autoagenix.com/privacy): Privacy-first browser tools for removing metadata and protecting sensitive information.
+* [Startup Tools](https://autoagenix.com/startup): Startup-focused browser calculators and models for founders and operators.
+* [Developer Tools](https://autoagenix.com/developer): Developer utilities and helper tools for software engineers.
+
+## Full Tool Inventory
+
+### Privacy Tools
+
+* [EXIF Metadata Remover](https://autoagenix.com/privacy/exif-metadata-remover): The EXIF Metadata Remover is a privacy-first utility designed to strip hidden Exchangeable Image File Format (EXIF) metadata from your photos before sharing them online. Image metadata often includes highly sensitive details such as precise GPS coordinates, date and time of capture, camera brand/model, and author details. Our tool runs 100% locally in your browser—your images are never uploaded to our servers, giving you complete data ownership and peace of mind.
+* [EXIF Metadata Viewer](https://autoagenix.com/privacy/exif-metadata-viewer): View all hidden EXIF metadata embedded in your photos instantly — camera make and model, GPS coordinates, exposure settings, date/time, and more. Our EXIF Metadata Viewer processes images entirely in your browser. No uploads. No servers. 100% private.
+
+### Startup Tools
+
+* [Burn Rate Calculator](https://autoagenix.com/startup/burn-rate-calculator): The Startup Burn Rate Calculator helps founders, finance directors, and operators compute their net and gross monthly cash burn. Monitoring your burn rate is essential for calculating runway, preparing for fundraising rounds, and making critical adjustments to operational expenses. Our tool runs entirely locally in your browser, keeping your sensitive financial details completely private and secure.
+* [Runway Calculator](https://autoagenix.com/startup/runway-calculator): The Startup Runway Calculator helps founders, CFOs, and operators determine their exact survival timeline based on cash reserves and monthly net burn rate. Knowing your runway allows you to strategically plan fundraising, hiring, and product development without running out of cash. Like all AutoAgenix tools, this calculator processes all calculations inside your browser, ensuring absolute security for your startup's financial data.
+
+### Developer Tools
+
+*No tools in this category yet.*
+
+## Blog Inventory
+
+* [[slug]](https://autoagenix.com/blog/[slug]): 
+
+## Legal
+
+* [Privacy Policy](https://autoagenix.com/privacy-policy): Our privacy practices.
+* [Terms of Service](https://autoagenix.com/terms): Our terms and conditions.
+
+## Architecture & Discoverability
+
+All tools are registered in a centralized metadata schema at `src/data/tools.ts`. Sitemaps, indexing files, and route schemas are generated directly from this schema. Adding a new tool config dynamically populates it across the site.

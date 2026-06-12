@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# AI discoverability
+Info: https://autoagenix.com/llms.txt
+
+Sitemap: https://autoagenix.com/sitemap.xml

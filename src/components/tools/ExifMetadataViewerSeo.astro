@@ -1,0 +1,101 @@
+---
+---
+<!-- What Is EXIF Metadata? -->
+<section class="exif-seo-section">
+  <h2 class="exif-seo-h2">What Is EXIF Metadata?</h2>
+  <p class="exif-seo-p">EXIF (Exchangeable Image File Format) is a standard format for storing metadata within digital image files. Every time a digital camera or smartphone takes a photo, it automatically embeds a block of structured data alongside the pixel information — recording details about the device, settings, time, and often the precise location where the shot was taken.</p>
+  <p class="exif-seo-p">This metadata is invisible when you look at the image normally, but it travels with the file everywhere you share it. The EXIF standard was introduced by JEIDA in 1995 and is now universally supported by cameras, smartphones, and photo editing software worldwide.</p>
+  <p class="exif-seo-p">Common EXIF containers include JPEG (.jpg, .jpeg), TIFF (.tif, .tiff), and HEIC — the high-efficiency format used by iPhone cameras. PNG and WebP use different metadata standards and typically carry little to no camera EXIF data.</p>
+</section>
+
+<!-- Why Does EXIF Data Matter? -->
+<section class="exif-seo-section">
+  <h2 class="exif-seo-h2">Why Does EXIF Data Matter?</h2>
+  <p class="exif-seo-p">EXIF metadata matters for several reasons depending on who is reading it. For photographers, it is an invaluable learning tool — reviewing your aperture, shutter speed, ISO, and focal length helps you understand which settings produced a great shot and improve your technique over time.</p>
+  <p class="exif-seo-p">For researchers, journalists, and forensic analysts, EXIF data is a powerful verification tool. The embedded timestamps and GPS coordinates can confirm when and where a photo was taken, supporting fact-checking, legal investigations, and investigative journalism.</p>
+  <p class="exif-seo-p">For everyday users, EXIF data is a privacy risk. If you share original photos online without stripping the metadata first, you may be inadvertently publishing your home address, daily routine, or precise whereabouts.</p>
+</section>
+
+<!-- Common EXIF Fields Explained -->
+<section class="exif-seo-section">
+  <h2 class="exif-seo-h2">Common EXIF Fields Explained</h2>
+  <p class="exif-seo-p">Modern cameras embed dozens of metadata fields. Here are the most important ones:</p>
+  <div class="exif-fields-grid">
+    <div class="exif-field-card">
+      <p class="exif-field-label">Make / Model</p>
+      <p class="exif-field-desc">The manufacturer and model name of the camera or smartphone (e.g., Apple iPhone 15 Pro, Canon EOS R5).</p>
+    </div>
+    <div class="exif-field-card">
+      <p class="exif-field-label">DateTimeOriginal</p>
+      <p class="exif-field-desc">The exact date and time the photo was captured, stored inside the image file regardless of when you renamed or copied it.</p>
+    </div>
+    <div class="exif-field-card">
+      <p class="exif-field-label">GPS Latitude &amp; Longitude</p>
+      <p class="exif-field-desc">Precise geographic coordinates of where the photo was taken, accurate to within a few meters on GPS-enabled devices.</p>
+    </div>
+    <div class="exif-field-card">
+      <p class="exif-field-label">FNumber (Aperture)</p>
+      <p class="exif-field-desc">The f-stop of the lens at capture time, displayed as ƒ/2.8 or ƒ/8.0. Lower number = wider aperture = shallower depth of field.</p>
+    </div>
+    <div class="exif-field-card">
+      <p class="exif-field-label">ExposureTime (Shutter Speed)</p>
+      <p class="exif-field-desc">How long the camera's shutter was open — e.g., 1/500s. Faster speeds freeze motion; slower speeds can create blur.</p>
+    </div>
+    <div class="exif-field-card">
+      <p class="exif-field-label">ISO Speed</p>
+      <p class="exif-field-desc">The sensor sensitivity. Higher ISO (e.g., ISO 3200) allows darker conditions but may introduce digital noise.</p>
+    </div>
+    <div class="exif-field-card">
+      <p class="exif-field-label">FocalLength</p>
+      <p class="exif-field-desc">The focal length in millimetres. 24mm is wide-angle; 200mm is telephoto. Affects angle of view and perspective.</p>
+    </div>
+    <div class="exif-field-card">
+      <p class="exif-field-label">Software</p>
+      <p class="exif-field-desc">The software used to process or edit the image — for example, "Adobe Lightroom 7.0" or "iOS 17.2".</p>
+    </div>
+  </div>
+</section>
+
+<!-- How To Remove EXIF Metadata -->
+<section class="exif-seo-section">
+  <h2 class="exif-seo-h2">How To Remove EXIF Metadata</h2>
+  <p class="exif-seo-p">Several methods are available to strip EXIF metadata before sharing a photo:</p>
+  <ul class="exif-seo-list">
+    <li><strong>AutoAgenix EXIF Metadata Remover</strong> — Use our free, browser-based <a href="/privacy/exif-metadata-remover" class="exif-seo-link">EXIF Metadata Remover</a> tool to strip all metadata from JPEG images in seconds. No upload, no install.</li>
+    <li><strong>Windows File Properties</strong> — Right-click image → Properties → Details → "Remove Properties and Personal Information".</li>
+    <li><strong>macOS Preview</strong> — Tools → Show Inspector → GPS → "Remove Location Info". Note: this only removes GPS data, not all EXIF.</li>
+    <li><strong>ExifTool (Command Line)</strong> — Run <code class="exif-code">exiftool -all= yourimage.jpg</code>. The most comprehensive cross-format option.</li>
+    <li><strong>Adobe Lightroom / Photoshop</strong> — On export, uncheck "Include: All Metadata" or restrict to a metadata subset.</li>
+  </ul>
+</section>
+
+<!-- Privacy Risks Of Photo Metadata -->
+<section class="exif-seo-section">
+  <h2 class="exif-seo-h2">Privacy Risks Of Photo Metadata</h2>
+  <p class="exif-seo-p">Sharing photos with GPS metadata intact can expose your location in ways most people do not expect:</p>
+  <ul class="exif-seo-list">
+    <li><strong>Home address disclosure</strong> — Photos taken at home reveal your residential address to anyone who inspects the EXIF GPS data.</li>
+    <li><strong>Daily routine tracking</strong> — A series of geotagged photos shared over time can map where you work, shop, and spend evenings.</li>
+    <li><strong>Stalking and personal safety</strong> — For abuse survivors, journalists, or public figures, GPS metadata poses a real physical safety risk.</li>
+    <li><strong>Corporate espionage</strong> — Photos inside secure facilities can reveal internal layouts and locations via metadata.</li>
+    <li><strong>Child safety</strong> — Photos of children often include school or home coordinates — data that should never be shared publicly.</li>
+  </ul>
+  <p class="exif-seo-p">The safest practice is to view your EXIF data before sharing any photo publicly, and to use an EXIF remover when the metadata is not needed.</p>
+</section>
+
+<style>
+  .exif-seo-section { padding: 48px 0; border-top: 1px solid #ebebeb; }
+  .exif-seo-h2 { font-size:20px; font-weight:600; letter-spacing:-0.6px; color:#171717; margin-bottom:16px; line-height:28px; }
+  .exif-seo-p { font-size:16px; color:#4d4d4d; line-height:24px; margin-bottom:12px; }
+  .exif-seo-p:last-child { margin-bottom:0; }
+  .exif-seo-list { list-style:disc; padding-left:20px; color:#4d4d4d; font-size:16px; line-height:24px; }
+  .exif-seo-list li { margin-bottom:10px; }
+  .exif-seo-link { color:#0070f3; text-decoration:underline; }
+  .exif-seo-link:hover { color:#0761d1; }
+  .exif-code { font-family:ui-monospace,monospace; font-size:13px; background:#f5f5f5; border:1px solid #ebebeb; border-radius:4px; padding:1px 5px; color:#171717; }
+  .exif-fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+  @media (max-width:640px) { .exif-fields-grid { grid-template-columns:1fr; } }
+  .exif-field-card { background:#fafafa; border:1px solid #ebebeb; border-radius:8px; padding:16px; }
+  .exif-field-label { font-size:12px; font-weight:500; color:#888; font-family:ui-monospace,monospace; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+  .exif-field-desc { font-size:14px; color:#4d4d4d; line-height:20px; }
+</style>

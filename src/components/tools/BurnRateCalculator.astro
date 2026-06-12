@@ -1,0 +1,63 @@
+---
+---
+<div class="max-w-md mx-auto w-full">
+  <form id="burn-rate-form" class="space-y-6">
+    <div>
+      <label for="expenses" class="block text-body-sm-strong text-ink mb-2">Monthly Expenses ($)</label>
+      <input type="number" id="expenses" required min="0" step="0.01" placeholder="e.g. 50000" class="w-full h-10 px-3 bg-canvas border border-hairline rounded-sm focus:outline-none focus:border-link transition-colors" />
+    </div>
+    
+    <div>
+      <label for="revenue" class="block text-body-sm-strong text-ink mb-2">Monthly Revenue ($)</label>
+      <input type="number" id="revenue" required min="0" step="0.01" placeholder="e.g. 20000" class="w-full h-10 px-3 bg-canvas border border-hairline rounded-sm focus:outline-none focus:border-link transition-colors" />
+    </div>
+
+    <button type="submit" class="w-full h-10 bg-primary text-on-primary rounded-pill font-medium hover:bg-ink/90 transition-colors">
+      Calculate Burn Rate
+    </button>
+  </form>
+
+  <div id="result-container" class="mt-8 p-6 bg-canvas-soft border border-hairline rounded-md hidden">
+    <div class="text-caption text-mute font-mono uppercase tracking-wider mb-2">Net Burn Rate</div>
+    <div id="result-value" class="text-display-lg font-semibold text-ink"></div>
+    <p id="result-message" class="text-body-sm text-body mt-2"></p>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('burn-rate-form');
+  const expensesInput = document.getElementById('expenses') as HTMLInputElement;
+  const revenueInput = document.getElementById('revenue') as HTMLInputElement;
+  const resultContainer = document.getElementById('result-container');
+  const resultValue = document.getElementById('result-value');
+  const resultMessage = document.getElementById('result-message');
+
+  if (form && expensesInput && revenueInput && resultContainer && resultValue && resultMessage) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const expenses = parseFloat(expensesInput.value);
+      const revenue = parseFloat(revenueInput.value);
+      
+      if (isNaN(expenses) || isNaN(revenue)) return;
+      
+      const burnRate = expenses - revenue;
+      
+      resultContainer.classList.remove('hidden');
+      
+      if (burnRate > 0) {
+        resultValue.textContent = `$${burnRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        resultValue.className = 'text-display-lg font-semibold text-error';
+        resultMessage.textContent = 'You are spending more than you are earning.';
+      } else if (burnRate < 0) {
+        resultValue.textContent = `+$${Math.abs(burnRate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        resultValue.className = 'text-display-lg font-semibold text-success';
+        resultMessage.textContent = 'You are profitable!';
+      } else {
+        resultValue.textContent = '$0.00';
+        resultValue.className = 'text-display-lg font-semibold text-ink';
+        resultMessage.textContent = 'You are breaking even.';
+      }
+    });
+  }
+</script>

@@ -1,0 +1,19 @@
+---
+import type { Tool } from '../data/tools';
+
+interface Props {
+  tool: Tool;
+}
+
+const { tool } = Astro.props;
+---
+
+<a href={tool.path} class="block group relative bg-canvas rounded-lg p-6 border border-hairline shadow-level-1 hover:shadow-level-2 transition-all hover:-translate-y-0.5">
+  <div class="flex flex-col h-full">
+    <div class="mb-4">
+      <h3 class="text-body-md-strong text-ink group-hover:text-link transition-colors">{tool.name}</h3>
+      <span class="inline-block mt-2 px-2 py-0.5 bg-canvas-soft text-mute text-caption rounded-full capitalize border border-hairline">{tool.category}</span>
+    </div>
+    <p class="text-body-sm text-body line-clamp-2 mt-auto">{tool.description}</p>
+  </div>
+</a>

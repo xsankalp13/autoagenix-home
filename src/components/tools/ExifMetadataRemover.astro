@@ -1,0 +1,148 @@
+---
+---
+<div class="max-w-xl mx-auto w-full text-center">
+  <div id="dropzone" class="border-2 border-dashed border-hairline-strong rounded-xl p-12 hover:bg-canvas-soft transition-colors cursor-pointer relative">
+    <input type="file" id="file-upload" accept="image/jpeg, image/png, image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+    <div class="space-y-4">
+      <div class="w-12 h-12 bg-canvas border border-hairline rounded-full flex items-center justify-center mx-auto shadow-level-1">
+        <svg class="w-6 h-6 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-body-md-strong text-ink">Upload an image</h3>
+        <p class="text-body-sm text-mute mt-1">Drag and drop, or click to browse. JPEG, PNG, or WebP.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="processing-container" class="mt-8 hidden">
+    <div class="animate-pulse flex items-center justify-center space-x-2 text-body-sm text-body">
+      <div class="w-2 h-2 bg-link rounded-full"></div>
+      <div class="w-2 h-2 bg-link rounded-full animation-delay-200"></div>
+      <div class="w-2 h-2 bg-link rounded-full animation-delay-400"></div>
+      <span>Processing image client-side...</span>
+    </div>
+  </div>
+
+  <div id="result-container" class="mt-8 hidden space-y-6">
+    <div class="bg-success/10 text-success border border-success/20 rounded-md p-4 flex items-start gap-3 text-left">
+      <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <h4 class="font-medium text-sm">Metadata Removed</h4>
+        <p class="text-xs mt-1 opacity-90">Image cleaned successfully. EXIF tags, location data, and camera info have been stripped.</p>
+      </div>
+    </div>
+    
+    <div class="aspect-video relative rounded-lg overflow-hidden border border-hairline bg-canvas-soft flex items-center justify-center">
+      <img id="preview-image" src="" alt="Cleaned image preview" class="max-w-full max-h-full object-contain" />
+    </div>
+
+    <a id="download-btn" href="#" download="cleaned-image.jpg" class="inline-flex items-center justify-center w-full h-10 bg-primary text-on-primary rounded-pill font-medium hover:bg-ink/90 transition-colors gap-2">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </svg>
+      Download Cleaned Image
+    </a>
+    
+    <button id="reset-btn" class="w-full text-body-sm text-body hover:text-ink transition-colors underline underline-offset-4">
+      Clean another image
+    </button>
+  </div>
+</div>
+
+<script>
+  const fileUpload = document.getElementById('file-upload') as HTMLInputElement;
+  const dropzone = document.getElementById('dropzone');
+  const processingContainer = document.getElementById('processing-container');
+  const resultContainer = document.getElementById('result-container');
+  const previewImage = document.getElementById('preview-image') as HTMLImageElement;
+  const downloadBtn = document.getElementById('download-btn') as HTMLAnchorElement;
+  const resetBtn = document.getElementById('reset-btn');
+
+  if (fileUpload && dropzone && processingContainer && resultContainer && previewImage && downloadBtn && resetBtn) {
+    
+    // Handle drag events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e: Event) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => dropzone.classList.add('border-link', 'bg-canvas-soft'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => dropzone.classList.remove('border-link', 'bg-canvas-soft'), false);
+    });
+
+    dropzone.addEventListener('drop', (e: DragEvent) => {
+      const dt = e.dataTransfer;
+      const files = dt?.files;
+      if (files && files.length) {
+        handleFile(files[0]);
+      }
+    });
+
+    fileUpload.addEventListener('change', function(this: HTMLInputElement) {
+      if (this.files && this.files.length) {
+        handleFile(this.files[0]);
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      resultContainer.classList.add('hidden');
+      dropzone.classList.remove('hidden');
+      fileUpload.value = '';
+    });
+
+    function handleFile(file: File) {
+      if (!file.type.match('image.*')) {
+        alert('Please select an image file (JPEG, PNG, WebP).');
+        return;
+      }
+
+      dropzone.classList.add('hidden');
+      processingContainer.classList.remove('hidden');
+
+      // The simplest way to strip EXIF in browser is to draw to canvas and export
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          
+          ctx.drawImage(img, 0, 0);
+          
+          // Exporting as jpeg or webp strips EXIF data
+          const format = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          const dataUrl = canvas.toDataURL(format, 0.95);
+          
+          previewImage.src = dataUrl;
+          
+          // Create download filename
+          const parts = file.name.split('.');
+          const ext = parts.pop();
+          downloadBtn.download = `${parts.join('.')}-cleaned.${ext}`;
+          downloadBtn.href = dataUrl;
+          
+          processingContainer.classList.add('hidden');
+          resultContainer.classList.remove('hidden');
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+</script>

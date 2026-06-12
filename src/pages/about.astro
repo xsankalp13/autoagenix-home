@@ -1,0 +1,164 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About Us | AutoAgenix" description="Learn about AutoAgenix - our principles, client-side architecture, and why we build privacy-first utilities.">
+  <!-- Page Header -->
+  <section class="pt-24 pb-16 px-4 md:px-6 max-w-[1200px] mx-auto animate-fade-up">
+    <div class="max-w-3xl">
+      <span class="font-mono text-xs uppercase tracking-widest text-mute mb-3 block">About AutoAgenix</span>
+      <h1 class="text-display-lg md:text-[48px] font-semibold tracking-[-1.5px] text-ink mb-6">Engineered for privacy.</h1>
+      <p class="text-body-lg text-body leading-relaxed font-medium">
+        We are a team of engineers and designers dedicated to building the best professional utilities on the web. AutoAgenix was born out of frustration with existing tools that were either too slow, filled with ads, or compromised user privacy by uploading sensitive data to servers.
+      </p>
+    </div>
+  </section>
+
+  <!-- Core Principles Section -->
+  <section class="py-20 md:py-28 px-4 md:px-6 bg-canvas border-t border-hairline">
+    <div class="max-w-[1200px] mx-auto reveal">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="font-mono text-xs uppercase tracking-widest text-mute mb-3 block">Guiding Principles</span>
+        <h2 class="text-display-lg md:text-[40px] font-semibold tracking-[-1.28px] text-ink mb-4">How we build.</h2>
+        <p class="text-body-lg text-body">Every utility in our registry conforms to three non-negotiable architectural mandates.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Principle 1 -->
+        <div class="bg-canvas-soft border border-hairline rounded-xl p-8 relative overflow-hidden shadow-level-2 hover:border-hairline-strong transition-all duration-300">
+          <div class="font-mono text-xs text-mute mb-6 flex items-center justify-between">
+            <span>01 / PRIVACY</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-body"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <h3 class="text-display-sm text-ink mb-3">Privacy by default.</h3>
+          <p class="text-body text-sm leading-relaxed text-balance">
+            Your files never leave your device. All calculations, metadata parsing, and media compression happen entirely client-side inside your browser sandbox. We collect zero analytics.
+          </p>
+        </div>
+
+        <!-- Principle 2 -->
+        <div class="bg-canvas-soft border border-hairline rounded-xl p-8 relative overflow-hidden shadow-level-2 hover:border-hairline-strong transition-all duration-300">
+          <div class="font-mono text-xs text-mute mb-6 flex items-center justify-between">
+            <span>02 / SPEED</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-body"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </div>
+          <h3 class="text-display-sm text-ink mb-3">Near-zero latency.</h3>
+          <p class="text-body text-sm leading-relaxed text-balance">
+            By removing the server roundtrip, we eliminate network queues and processing overhead. Computations are powered by modern JS and WebAssembly, executing at the raw speed of your local CPU.
+          </p>
+        </div>
+
+        <!-- Principle 3 -->
+        <div class="bg-canvas-soft border border-hairline rounded-xl p-8 relative overflow-hidden shadow-level-2 hover:border-hairline-strong transition-all duration-300">
+          <div class="font-mono text-xs text-mute mb-6 flex items-center justify-between">
+            <span>03 / CRAFT</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-body"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 8V16"></path><path d="M8 12H16"></path></svg>
+          </div>
+          <h3 class="text-display-sm text-ink mb-3">Sweated details.</h3>
+          <p class="text-body text-sm leading-relaxed text-balance">
+            We believe professional developer tools should not look like they were built in the 90s. We design with stark contrast, responsive layouts, clear focus states, and custom typography.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architectural Comparison Section -->
+  <section class="py-20 md:py-28 px-4 md:px-6 bg-canvas-soft border-t border-hairline">
+    <div class="max-w-[1200px] mx-auto reveal">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="font-mono text-xs uppercase tracking-widest text-mute mb-3 block">Architectural Design</span>
+        <h2 class="text-display-lg md:text-[40px] font-semibold tracking-[-1.28px] text-ink mb-4">Engineered differently.</h2>
+        <p class="text-body-lg text-body">A comparison of traditional online tools versus our browser-native execution model.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <!-- Traditional Tools (The Old Way) -->
+        <div class="bg-canvas border border-hairline rounded-xl p-8 shadow-level-2 opacity-80 flex flex-col justify-between">
+          <div>
+            <div class="font-mono text-[10px] text-error uppercase tracking-widest mb-6">Traditional Cloud SaaS</div>
+            <h3 class="text-display-md text-ink mb-6">The remote server model.</h3>
+            
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3 text-body-sm text-body">
+                <span class="text-error mt-0.5 font-bold">×</span>
+                <div>
+                  <strong class="text-ink">Upload pipeline required:</strong> Files and sensitive data must be sent over the public internet to third-party servers.
+                </div>
+              </li>
+              <li class="flex items-start gap-3 text-body-sm text-body">
+                <span class="text-error mt-0.5 font-bold">×</span>
+                <div>
+                  <strong class="text-ink">Processing queues:</strong> Execution is delayed by remote server availability and network bandwidth limits.
+                </div>
+              </li>
+              <li class="flex items-start gap-3 text-body-sm text-body">
+                <span class="text-error mt-0.5 font-bold">×</span>
+                <div>
+                  <strong class="text-ink">Data footprint risk:</strong> Temporary file storage on remote disks leaves logs, DB history, and compliance vectors.
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-8 pt-6 border-t border-hairline text-xs font-mono text-mute">
+            Status: Network & database dependent.
+          </div>
+        </div>
+
+        <!-- AutoAgenix (The New Way) -->
+        <div class="bg-primary text-on-primary border border-ink rounded-xl p-8 shadow-level-4 flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-cyan/10 blur-[100px] rounded-full pointer-events-none"></div>
+          <div class="absolute bottom-0 left-0 w-64 h-64 bg-violet/10 blur-[100px] rounded-full pointer-events-none"></div>
+          
+          <div class="relative z-10">
+            <div class="font-mono text-[10px] text-cyan uppercase tracking-widest mb-6">AutoAgenix Architecture</div>
+            <h3 class="text-display-md text-on-primary mb-6">The browser-native model.</h3>
+            
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3 text-body-sm text-mute">
+                <span class="text-cyan mt-0.5 font-bold">✓</span>
+                <div>
+                  <strong class="text-on-primary">On-device isolation:</strong> Processing happens entirely in the browser memory sandbox. No upload requests.
+                </div>
+              </li>
+              <li class="flex items-start gap-3 text-body-sm text-mute">
+                <span class="text-cyan mt-0.5 font-bold">✓</span>
+                <div>
+                  <strong class="text-on-primary">Local CPU execution:</strong> Leverages WASM and hardware acceleration to compute results immediately on load.
+                </div>
+              </li>
+              <li class="flex items-start gap-3 text-body-sm text-mute">
+                <span class="text-cyan mt-0.5 font-bold">✓</span>
+                <div>
+                  <strong class="text-on-primary">Zero storage footprint:</strong> When you close the tab, your sandbox memory is purged. No data is stored, period.
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-8 pt-6 border-t border-ink text-xs font-mono text-cyan/70 relative z-10">
+            Status: Fully decoupled & offline capable.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Reveal animation helper
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    document.querySelectorAll('.reveal').forEach((el) => {
+      observer.observe(el);
+    });
+  });
+</script>

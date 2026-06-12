@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Format current date for the header
+const lastUpdated = "June 11, 2026";
+---
+
+<BaseLayout title="Privacy Policy | AutoAgenix" description="Review the AutoAgenix Privacy Policy. Learn about our local-only execution model and commitment to data protection.">
+  <div class="max-w-[1200px] mx-auto px-4 md:px-6 pt-24 pb-20">
+    
+    <!-- Header -->
+    <header class="mb-16 pb-8 border-b border-hairline max-w-4xl animate-fade-up">
+      <span class="font-mono text-xs uppercase tracking-widest text-mute mb-3 block">LEGAL / COMPLIANCE</span>
+      <h1 class="text-display-lg md:text-[56px] font-semibold tracking-[-2px] text-ink mb-4">Privacy Policy.</h1>
+      <p class="text-body-lg text-body">Last updated on {lastUpdated}</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+      
+      <!-- Sticky Sidebar Navigation (Desktop only) -->
+      <aside class="lg:col-span-3 hidden lg:block sticky top-24 h-fit animate-fade-up delay-100">
+        <span class="font-mono text-[10px] uppercase tracking-widest text-mute mb-4 block">ON THIS PAGE</span>
+        <nav class="space-y-4 font-mono text-xs text-body">
+          <a href="#local-first" class="block hover:text-ink transition-colors font-medium">1. Local-First Processing</a>
+          <a href="#data-collection" class="block hover:text-ink transition-colors">2. Zero Data Collection</a>
+          <a href="#cookies-tracking" class="block hover:text-ink transition-colors">3. Cookies & Analytics</a>
+          <a href="#third-party" class="block hover:text-ink transition-colors">4. Third-Party Networks</a>
+          <a href="#contact" class="block hover:text-ink transition-colors">5. Contact Information</a>
+        </nav>
+      </aside>
+
+      <!-- Main Policy Content -->
+      <div class="lg:col-span-9 max-w-3xl animate-fade-up delay-150">
+        <div class="prose-custom">
+          
+          <p class="text-body-lg text-ink font-medium mb-12 leading-relaxed">
+            AutoAgenix is built on a foundational promise: your private developer metrics and file assets belong exclusively on your hardware. We do not maintain user accounts, session stores, or database clusters.
+          </p>
+
+          <hr class="border-hairline my-8" />
+
+          <!-- Section 1 -->
+          <section id="local-first" class="mb-12 scroll-mt-24">
+            <h2 class="text-display-sm md:text-2xl font-semibold tracking-tight text-ink mb-4">1. Local-First Processing</h2>
+            <p class="text-body text-sm leading-relaxed mb-4">
+              All computing services offered under the AutoAgenix domain (including Runway calculations, Burn Rate calculations, and metadata scrubbing) run strictly inside the user's browser sandbox using modern JavaScript execution and WebAssembly compilation.
+            </p>
+            <p class="text-body text-sm leading-relaxed mb-4">
+              Asset files (such as images, PDF drafts, and metadata inputs) are never transmitted to remote server resources. Processing is computed on local memory blocks and instantly cleared upon close of the corresponding tab session.
+            </p>
+          </section>
+
+          <!-- Section 2 -->
+          <section id="data-collection" class="mb-12 scroll-mt-24">
+            <h2 class="text-display-sm md:text-2xl font-semibold tracking-tight text-ink mb-4">2. Zero Data Collection</h2>
+            <p class="text-body text-sm leading-relaxed mb-4">
+              We do not maintain customer databases or identity stores. You are not required to generate an profile, sign in via social authentication protocols, or register licensing details to utilize our developer tools.
+            </p>
+            <p class="text-body text-sm leading-relaxed">
+              Any input configuration, settings, or values entered inside input modules are stored locally in the stateful scope of your active browser session.
+            </p>
+          </section>
+
+          <!-- Section 3 -->
+          <section id="cookies-tracking" class="mb-12 scroll-mt-24">
+            <h2 class="text-display-sm md:text-2xl font-semibold tracking-tight text-ink mb-4">3. Cookies & Analytics</h2>
+            <p class="text-body text-sm leading-relaxed mb-4">
+              We do not use targeting trackers, advertising cookies, or cross-site fingerprinting technology. We use a privacy-respecting, lightweight visitor analytics mechanism to record aggregate visits to static routes. This utility stores no cookies and processes no individual user records.
+            </p>
+          </section>
+
+          <!-- Section 4 -->
+          <section id="third-party" class="mb-12 scroll-mt-24">
+            <h2 class="text-display-sm md:text-2xl font-semibold tracking-tight text-ink mb-4">4. Third-Party Networks</h2>
+            <p class="text-body text-sm leading-relaxed mb-4">
+              Our site files are distributed across globally decentralized CDNs. When you access these pages, third-party network operators may record basic routing logs (IP address, browser agent type) strictly for safety audits, traffic control, and server performance monitoring.
+            </p>
+          </section>
+
+          <!-- Section 5 -->
+          <section id="contact" class="mb-12 scroll-mt-24">
+            <h2 class="text-display-sm md:text-2xl font-semibold tracking-tight text-ink mb-4">5. Contact Information</h2>
+            <p class="text-body text-sm leading-relaxed mb-4">
+              Should you submit an inquiry through our direct communication channel or contact form, we will use your provided parameters (name, email address) solely to evaluate your query. Your input credentials will never be shared, sold, or leased to third-party organizations.
+            </p>
+            <p class="text-body text-sm leading-relaxed">
+              If you have inquiries regarding this privacy document, please contact us at <a href="mailto:work@autoagenix.com" class="text-ink font-semibold hover:text-link underline">work@autoagenix.com</a>.
+            </p>
+          </section>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Smooth scroll support for side-jump navigation */
+  html {
+    scroll-behavior: smooth;
+  }
+</style>

@@ -1,0 +1,188 @@
+---
+import { siteMetadata } from '../../data/siteMetadata';
+import type { Tool } from '../../data/tools';
+import JsonLd from './JsonLd.astro';
+import {
+  generateWebSiteSchema,
+  generateOrganizationSchema,
+  generateSoftwareApplicationSchema,
+  generateFAQPageSchema,
+  generateBreadcrumbSchemaFromPath,
+  type SchemaOrgEntity
+} from '../../lib/seo/schema';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  twitterCard?: 'summary' | 'summary_large_image' | 'app' | 'player';
+  twitterSite?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: string;
+  robots?: string;
+  article?: {
+    publishedTime?: string;
+    author?: string;
+    section?: string;
+    tags?: string[];
+  };
+  tool?: Tool;
+  faqs?: { question: string; answer: string }[];
+  schemas?: SchemaOrgEntity[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogTitle,
+  ogDescription,
+  ogImage,
+  ogType = 'website',
+  twitterCard = 'summary_large_image',
+  twitterSite,
+  twitterTitle,
+  twitterDescription,
+  twitterImage,
+  robots = 'index, follow',
+  article,
+  tool,
+  faqs,
+  schemas,
+} = Astro.props;
+
+// 1. Format Title
+const cleanTitle = (() => {
+  if (!title) {
+    return siteMetadata.name;
+  }
+  if (title.includes(siteMetadata.name)) {
+    return title;
+  }
+  return `${title} | ${siteMetadata.name}`;
+})();
+
+// 2. Format Description
+const cleanDescription = description || siteMetadata.defaultDescription;
+
+// 3. Format Canonical URL
+const cleanCanonical = (() => {
+  if (canonical) {
+    if (canonical.startsWith('http://') || canonical.startsWith('https://')) {
+      return canonical;
+    }
+    return new URL(canonical, siteMetadata.url).toString();
+  }
+  
+  let pathname = Astro.url.pathname;
+  if (pathname !== '/' && pathname.endsWith('/')) {
+    pathname = pathname.slice(0, -1);
+  }
+  return new URL(pathname, siteMetadata.url).toString();
+})();
+
+// Helper to resolve absolute URLs for images
+const getAbsoluteImageUrl = (imagePath?: string) => {
+  const path = imagePath || siteMetadata.defaultOgImage;
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  return new URL(normalizedPath, siteMetadata.url).toString();
+};
+
+const finalOgImage = getAbsoluteImageUrl(ogImage);
+const finalTwitterImage = getAbsoluteImageUrl(twitterImage || ogImage);
+
+// OpenGraph fallbacks
+const finalOgTitle = ogTitle || title || siteMetadata.name;
+const finalOgDescription = ogDescription || description || siteMetadata.defaultDescription;
+
+// Twitter fallbacks
+const finalTwitterTitle = twitterTitle || ogTitle || title || siteMetadata.name;
+const finalTwitterDescription = twitterDescription || ogDescription || description || siteMetadata.defaultDescription;
+const finalTwitterSite = twitterSite || siteMetadata.twitterHandle;
+
+// Schema generation logic
+const schemasToRender: SchemaOrgEntity[] = [];
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/' || pathname === '';
+
+if (isHome) {
+  schemasToRender.push(generateWebSiteSchema());
+  schemasToRender.push(generateOrganizationSchema());
+}
+
+if (tool) {
+  const toolUrl = new URL(tool.path, siteMetadata.url).toString();
+  schemasToRender.push(
+    generateSoftwareApplicationSchema({
+      name: tool.name,
+      description: tool.description,
+      url: toolUrl,
+      category: tool.category,
+    })
+  );
+
+  if (tool.faqs && tool.faqs.length > 0) {
+    schemasToRender.push(generateFAQPageSchema(tool.faqs));
+  }
+} else if (faqs && faqs.length > 0) {
+  schemasToRender.push(generateFAQPageSchema(faqs));
+}
+
+if (!isHome) {
+  schemasToRender.push(generateBreadcrumbSchemaFromPath(pathname));
+}
+
+if (schemas) {
+  schemasToRender.push(...schemas);
+}
+---
+
+<!-- Title and Basic Meta -->
+{cleanTitle && <title>{cleanTitle}</title>}
+{cleanDescription && <meta name="description" content={cleanDescription} />}
+{robots && <meta name="robots" content={robots} />}
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+
+<!-- Canonical -->
+{cleanCanonical && <link rel="canonical" href={cleanCanonical} />}
+
+<!-- Open Graph -->
+{finalOgTitle && <meta property="og:title" content={finalOgTitle} />}
+{finalOgDescription && <meta property="og:description" content={finalOgDescription} />}
+{ogType && <meta property="og:type" content={ogType} />}
+{cleanCanonical && <meta property="og:url" content={cleanCanonical} />}
+{finalOgImage && <meta property="og:image" content={finalOgImage} />}
+{siteMetadata.name && <meta property="og:site_name" content={siteMetadata.name} />}
+
+<!-- Twitter Card -->
+{twitterCard && <meta name="twitter:card" content={twitterCard} />}
+{finalTwitterTitle && <meta name="twitter:title" content={finalTwitterTitle} />}
+{finalTwitterDescription && <meta name="twitter:description" content={finalTwitterDescription} />}
+{finalTwitterImage && <meta name="twitter:image" content={finalTwitterImage} />}
+{finalTwitterSite && <meta name="twitter:site" content={finalTwitterSite} />}
+
+<!-- Article Metadata -->
+{ogType === 'article' && article && (
+  <>
+    {article.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
+    {article.author && <meta property="article:author" content={article.author} />}
+    {article.section && <meta property="article:section" content={article.section} />}
+    {article.tags && article.tags.map((tag) => <meta property="article:tag" content={tag} />)}
+  </>
+)}
+
+<!-- Render JSON-LD Schemas -->
+{schemasToRender.length > 0 && <JsonLd schema={schemasToRender} />}
+
+<!-- Slot for future extensibility (e.g. JSON-LD, specific tracking tags, etc.) -->
+<slot />

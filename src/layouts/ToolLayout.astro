@@ -1,0 +1,263 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { tools, categories } from '../data/tools';
+import { getRelevantBlogPosts } from '../data/blog';
+import type { Tool } from '../data/tools';
+
+interface Props {
+  tool: Tool;
+}
+
+const { tool } = Astro.props;
+
+// 1. Get Category Details
+const categoryInfo = categories.find(c => c.id === tool.category);
+
+// 2. Resolve FAQs from same source
+const faqItems = tool.faq || tool.faqs || [];
+
+// 3. Normalized tool object for schema generation (ensure tool.faqs is in sync)
+const normalizedTool = {
+  ...tool,
+  faqs: faqItems
+};
+
+// 4. Generate Related Tools (Same category first, then adjacent categories)
+const otherTools = tools.filter(t => t.id !== tool.id);
+const sameCategoryTools = otherTools.filter(t => t.category === tool.category);
+const adjacentCategoryTools = otherTools.filter(t => t.category !== tool.category);
+const relatedToolsData = [...sameCategoryTools, ...adjacentCategoryTools].slice(0, 3);
+
+// 5. Generate Relevant Blog Articles
+const relevantBlogArticles = tool.relatedArticles || [];
+---
+
+<BaseLayout 
+  title={tool.title || tool.name} 
+  description={tool.shortDescription || tool.description} 
+  tool={normalizedTool} 
+  faqs={faqItems}
+>
+  <div class="px-4 md:px-6 py-12 lg:py-20 max-w-[1000px] mx-auto">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs 
+      items={[
+        { label: 'Home', path: '/' },
+        { label: categoryInfo?.name || tool.category, path: `/${tool.category}` },
+        { label: tool.name, path: tool.path }
+      ]} 
+    />
+    
+    <!-- Hero / Header Section -->
+    <div class="mt-8 mb-10">
+      <div class="flex items-center gap-3 mb-4 flex-wrap">
+        <span class="inline-flex items-center px-3 py-1 bg-link-bg-soft text-link text-xs font-semibold rounded-full uppercase tracking-wider border border-link/10">
+          {categoryInfo?.name || tool.category}
+        </span>
+        {tool.badge && (
+          <span class="inline-flex items-center px-3 py-1 bg-violet-soft/20 text-violet-deep dark:text-violet-soft text-xs font-semibold rounded-full uppercase tracking-wider border border-violet/10">
+            {tool.badge}
+          </span>
+        )}
+      </div>
+      <h1 class="text-display-lg md:text-display-xl font-bold tracking-tight text-ink mb-4 text-balance">
+        {tool.title || tool.name}
+      </h1>
+      <p class="text-body-lg text-body max-w-3xl text-balance">
+        {tool.shortDescription || tool.description}
+      </p>
+    </div>
+    
+    <!-- 1. Tool Interface Section -->
+    <div class="bg-canvas shadow-level-3 rounded-xl p-6 md:p-8 border border-hairline relative mb-10 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-link/[0.01] to-link/[0.02] pointer-events-none"></div>
+      <slot />
+    </div>
+
+    <!-- Named slot for tool-specific SEO sections (injected outside the card) -->
+    <slot name="seo" />
+
+    <!-- 2. Tool Description Section -->
+    <section class="border-t border-hairline pt-16 pb-12">
+      <div class="max-w-3xl">
+        <h2 class="text-display-sm font-bold tracking-tight text-ink mb-6">About {tool.name}</h2>
+        <div class="text-body-lg text-body space-y-4 leading-relaxed">
+          <p>{tool.description}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. How It Works Section -->
+    {tool.howItWorks && (
+      <section class="border-t border-hairline py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          <div class="lg:col-span-4">
+            <h2 class="text-display-sm font-bold tracking-tight text-ink mb-4">How It Works</h2>
+            <p class="text-body text-body-md leading-relaxed">
+              Understand the core mechanics, math, or processes that drive this online utility.
+            </p>
+          </div>
+          <div class="lg:col-span-8">
+            <div class="bg-canvas-soft border border-hairline rounded-xl p-6 md:p-8 relative">
+              <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-link/5 to-transparent rounded-tr-xl pointer-events-none"></div>
+              <h3 class="text-body-md-strong text-ink font-semibold mb-4">Processing Mechanism</h3>
+              <p class="text-body text-body-md leading-relaxed whitespace-pre-line">{tool.howItWorks}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- 4. Benefits Section -->
+    {tool.benefits && tool.benefits.length > 0 && (
+      <section class="border-t border-hairline py-16">
+        <h2 class="text-display-sm font-bold tracking-tight text-ink mb-8">Key Benefits & Advantages</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {tool.benefits.map((benefit, idx) => {
+            const colonIdx = benefit.indexOf(':');
+            const title = colonIdx !== -1 ? benefit.substring(0, colonIdx) : `Feature ${idx + 1}`;
+            const desc = colonIdx !== -1 ? benefit.substring(colonIdx + 1).trim() : benefit;
+            
+            return (
+              <div class="bg-canvas border border-hairline rounded-lg p-6 hover:shadow-level-2 transition-all hover:border-hairline-strong group">
+                <div class="flex items-start gap-4">
+                  <div class="w-8 h-8 rounded-full bg-link/10 flex items-center justify-center text-link font-bold text-sm flex-shrink-0 group-hover:bg-link group-hover:text-canvas transition-colors">
+                    {idx + 1}
+                  </div>
+                  <div>
+                    <h3 class="text-body-md-strong text-ink mb-2">{title}</h3>
+                    <p class="text-body-sm text-body leading-relaxed">{desc}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- 5. Common Use Cases Section -->
+    {tool.useCases && tool.useCases.length > 0 && (
+      <section class="border-t border-hairline py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          <div class="lg:col-span-4">
+            <h2 class="text-display-sm font-bold tracking-tight text-ink mb-4">Common Use Cases</h2>
+            <p class="text-body text-body-md leading-relaxed">
+              Discover real-world scenarios where this utility is widely applied.
+            </p>
+          </div>
+          <div class="lg:col-span-8">
+            <ul class="space-y-4">
+              {tool.useCases.map((useCase) => (
+                <li class="flex items-start gap-3 bg-canvas border border-hairline rounded-lg p-5 hover:bg-canvas-soft-2 transition-colors">
+                  <span class="text-success mt-0.5 flex-shrink-0">✓</span>
+                  <span class="text-body-md text-ink">{useCase}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- 6. FAQ Section -->
+    {faqItems.length > 0 && (
+      <section class="border-t border-hairline py-16">
+        <h2 class="text-display-sm font-bold tracking-tight text-ink mb-8 text-center">Frequently Asked Questions</h2>
+        <div class="max-w-3xl mx-auto space-y-4">
+          {faqItems.map((faqItem) => (
+            <details class="bg-canvas border border-hairline rounded-lg overflow-hidden group transition-all duration-200 open:border-hairline-strong shadow-level-1 hover:shadow-level-2">
+              <summary class="flex items-center justify-between p-6 font-semibold text-ink hover:bg-canvas-soft-2 transition-colors select-none">
+                <span class="text-body-md-strong text-ink pr-4">{faqItem.question}</span>
+                <span class="faq-icon text-mute flex-shrink-0 w-6 h-6 rounded-full border border-hairline flex items-center justify-center font-mono text-lg transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <div class="px-6 pb-6 pt-2 border-t border-hairline/50 text-body text-body-md leading-relaxed">
+                {faqItem.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- 7. Related Tools Section -->
+    {relatedToolsData.length > 0 && (
+      <section class="border-t border-hairline py-16">
+        <h2 class="text-display-sm font-bold tracking-tight text-ink mb-8">Related Tools & Utilities</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {relatedToolsData.map(relatedTool => (
+            <a href={relatedTool.path} class="block group relative bg-canvas rounded-lg p-6 border border-hairline shadow-level-1 hover:shadow-level-2 transition-all hover:-translate-y-0.5 hover:border-hairline-strong">
+              <div class="flex flex-col h-full">
+                <div class="mb-4">
+                  <h3 class="text-body-md-strong text-ink group-hover:text-link transition-colors">{relatedTool.name}</h3>
+                  <span class="inline-block mt-2 px-2 py-0.5 bg-canvas-soft text-mute text-caption rounded-full capitalize border border-hairline">{relatedTool.category}</span>
+                </div>
+                <p class="text-body-sm text-body line-clamp-3 mt-auto">{relatedTool.shortDescription || relatedTool.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- 8. Internal Linking (Resource Hub) Section -->
+    <section class="border-t border-hairline pt-16 mt-8">
+      <div class="bg-canvas-soft-2 border border-hairline rounded-xl p-8 md:p-12 relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid-overlay opacity-20 pointer-events-none"></div>
+        <div class="relative z-10">
+          <h3 class="text-display-xs font-bold tracking-tight text-ink mb-8">Resource Hub</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Category Portal -->
+            <div class="space-y-3">
+              <h4 class="text-caption text-mute uppercase font-bold tracking-widest font-mono">Category Portal</h4>
+              <p class="text-body-sm text-body leading-relaxed">
+                Explore more tools inside the {categoryInfo?.name || tool.category} suite.
+              </p>
+              <a href={`/${tool.category}`} class="inline-flex items-center text-link font-medium hover:text-link-deep transition-colors text-body-sm group">
+                Browse {categoryInfo?.name || tool.category} Tools 
+                <span class="ml-1 transition-transform group-hover:translate-x-0.5">→</span>
+              </a>
+            </div>
+            
+            <!-- Related Utilities -->
+            <div class="space-y-3">
+              <h4 class="text-caption text-mute uppercase font-bold tracking-widest font-mono">Related Utilities</h4>
+              <ul class="space-y-2 text-body-sm">
+                {relatedToolsData.map(related => (
+                  <li>
+                    <a href={related.path} class="text-link hover:text-link-deep transition-colors inline-flex items-center group">
+                      {related.name}
+                      <span class="ml-1 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <!-- Recommended Articles -->
+            <div class="space-y-3">
+              <h4 class="text-caption text-mute uppercase font-bold tracking-widest font-mono">Recommended Articles</h4>
+              {relevantBlogArticles.length > 0 ? (
+                <ul class="space-y-2 text-body-sm">
+                  {relevantBlogArticles.map(article => (
+                    <li>
+                      <a href={article.path} class="text-link hover:text-link-deep transition-colors inline-flex items-center group">
+                        {article.title}
+                        <span class="ml-1 transition-transform group-hover:translate-x-0.5">→</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="text-body-sm text-mute">No articles published yet.</p>
+              )}
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

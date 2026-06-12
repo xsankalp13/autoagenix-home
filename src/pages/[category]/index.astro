@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { categories, getToolsByCategory } from '../../data/tools';
+
+export function getStaticPaths() {
+  return categories.map(category => ({
+    params: { category: category.id },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const categoryTools = getToolsByCategory(category.id);
+
+// Fetch and filter articles belonging to this category
+import { blogPosts } from '../../data/blog';
+const categoryArticles = blogPosts.filter(post => post.tags.includes(category.id));
+---
+
+<BaseLayout title={`${category.name} Tools | AutoAgenix`} description={category.description}>
+  <div class="px-4 md:px-6 py-12 lg:py-24 max-w-[1200px] mx-auto">
+    <Breadcrumbs 
+      items={[
+        { label: 'Home', path: '/' },
+        { label: category.name, path: `/${category.id}` }
+      ]} 
+    />
+    
+    <div class="mt-8 mb-16">
+      <h1 class="text-display-xl font-semibold tracking-tight text-ink mb-4">{category.name} Tools</h1>
+      <p class="text-body-lg text-body max-w-2xl">{category.description}</p>
+    </div>
+    
+    {categoryTools.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categoryTools.map(tool => (
+          <ToolCard tool={tool} />
+        ))}
+      </div>
+    ) : (
+      <div class="bg-canvas-soft border border-hairline rounded-lg p-12 text-center text-body">
+        <p>New tools coming to this category soon.</p>
+      </div>
+    )}
+
+    {categoryArticles.length > 0 && (
+      <div class="mt-24 pt-16 border-t border-hairline">
+        <h2 class="text-display-md font-semibold tracking-tight text-ink mb-8">Guides & Articles</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {categoryArticles.map(article => (
+            <article class="group relative bg-canvas-soft border border-hairline rounded-xl p-6 hover:shadow-level-2 transition-all duration-200">
+              <time class="text-caption text-mute font-mono block mb-2">
+                {new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+              <h3 class="text-body-md-strong font-semibold text-ink mb-2 group-hover:text-link transition-colors">
+                <a href={article.path}>{article.title}</a>
+              </h3>
+              <p class="text-body-sm text-body line-clamp-3 mb-4">{article.description}</p>
+              <a href={article.path} class="text-link text-body-sm font-medium hover:text-link-deep transition-colors">
+                Read full article →
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+

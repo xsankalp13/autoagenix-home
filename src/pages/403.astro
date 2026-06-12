@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="403 Access Denied | AutoAgenix" 
+  description="You do not have permission to access this resource on AutoAgenix."
+  robots="noindex, follow"
+>
+  <div class="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden py-12">
+    
+    <!-- Background grid overlay -->
+    <div class="absolute inset-0 grid-overlay opacity-30 dark:opacity-40 pointer-events-none"></div>
+    
+    <!-- Atmospheric mesh gradient -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] mesh-gradient opacity-40 dark:opacity-30 pointer-events-none"></div>
+    
+    <div class="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
+      
+      <!-- Monospace Error Tag -->
+      <span class="font-mono text-xs uppercase tracking-[0.2em] text-mute mb-4 animate-fade-in">
+        [ ERROR_CODE: 403_ACCESS_FORBIDDEN ]
+      </span>
+      
+      <!-- Big Bold Code -->
+      <h1 class="text-[120px] sm:text-[160px] font-semibold tracking-[-0.06em] leading-none text-ink select-none animate-fade-up">
+        403<span class="text-mute">.</span>
+      </h1>
+      
+      <!-- Title -->
+      <h2 class="text-display-lg sm:text-[40px] font-semibold tracking-[-0.04em] text-ink mt-2 mb-4 animate-fade-up delay-100">
+        Access denied.
+      </h2>
+      
+      <!-- Description -->
+      <p class="text-body-lg text-body max-w-lg mb-8 animate-fade-up delay-200">
+        You do not have the required permissions or cryptographic scopes to view this resource.
+      </p>
+
+      <!-- Terminal Mockup -->
+      <div class="w-full max-w-md bg-[#0a0a0a] text-white/90 rounded-md border border-[#262626] p-4 text-left font-mono text-[13px] shadow-level-3 animate-fade-up delay-300 mb-8">
+        <div class="flex items-center gap-1.5 pb-2.5 border-b border-[#262626] mb-3 text-mute select-none">
+          <span class="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
+          <span class="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
+          <span class="w-3 h-3 rounded-full bg-[#27c93f]"></span>
+          <span class="ml-2 text-[11px] text-[#737373]">bash - permissions.sh</span>
+        </div>
+        <div class="space-y-1.5 text-white/70">
+          <p class="text-white/40"><span class="text-[#50e3c2]">$</span> auth-check --verbose</p>
+          <p class="text-[#f5a623]">Status: FORBIDDEN</p>
+          <p>identity: <span class="text-white">anonymous_user</span></p>
+          <p>scope_required: <span class="text-white">read:restricted</span></p>
+          <p class="text-[#ee0000]">error: CREDENTIAL_SCOPE_INSUFFICIENT</p>
+          <p class="text-white/40 animate-pulse">$ <span class="bg-[#50e3c2] w-2 h-3.5 inline-block align-middle"></span></p>
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row items-center gap-4 animate-fade-up delay-400">
+        <button 
+          onclick="window.history.back();" 
+          class="flex items-center justify-center px-6 py-2.5 bg-primary text-on-primary text-sm font-medium rounded-pill hover:opacity-90 transition-opacity h-11 w-44 cursor-pointer"
+        >
+          Go Back
+        </button>
+        <a 
+          href="/" 
+          class="flex items-center justify-center px-6 py-2.5 bg-canvas border border-hairline text-ink text-sm font-medium rounded-pill hover:bg-canvas-soft-2 hover:border-hairline-strong transition-all h-11 w-44"
+        >
+          Go Back Home
+        </a>
+      </div>
+      
+      <!-- Footer-link to contact -->
+      <p class="mt-8 text-xs text-mute font-mono animate-fade-in delay-500">
+        Need access? <a href="mailto:work@autoagenix.com" class="text-ink hover:underline">Request scope clearance</a>
+      </p>
+
+    </div>
+  </div>
+</BaseLayout>

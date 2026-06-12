@@ -1,0 +1,28 @@
+# AutoAgenix
+> Privacy-first browser-based tools.
+
+This file provides a high-level index of our platform. For a complete inventory of all tools, see the [Full Index](https://autoagenix.com/llms-full.txt).
+
+## Categories
+
+* [Privacy Tools](https://autoagenix.com/privacy)
+* [Startup Tools](https://autoagenix.com/startup)
+* [Developer Tools](https://autoagenix.com/developer)
+
+## Featured Tools
+
+* [EXIF Metadata Remover](https://autoagenix.com/privacy/exif-metadata-remover)
+* [EXIF Metadata Viewer](https://autoagenix.com/privacy/exif-metadata-viewer)
+* [Burn Rate Calculator](https://autoagenix.com/startup/burn-rate-calculator)
+* [Runway Calculator](https://autoagenix.com/startup/runway-calculator)
+
+## Blog
+
+* [Blog](https://autoagenix.com/blog)
+
+## Legal
+
+Link to:
+
+* [Privacy Policy](https://autoagenix.com/privacy-policy)
+* [Terms of Service](https://autoagenix.com/terms)

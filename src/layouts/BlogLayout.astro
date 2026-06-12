@@ -1,0 +1,49 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  image?: string;
+  featuredImage?: string;
+}
+
+const { title, description, date, author, image, featuredImage } = Astro.props;
+---
+
+<BaseLayout 
+  title={title} 
+  description={description} 
+  ogType="article" 
+  ogImage={image || featuredImage}
+  article={{
+    publishedTime: date,
+    author: author
+  }}
+>
+  <article class="max-w-3xl mx-auto px-4 md:px-6 py-12 lg:py-24">
+    <Breadcrumbs 
+      items={[
+        { label: 'Home', path: '/' },
+        { label: 'Blog', path: '/blog' },
+        { label: title, path: '#' }
+      ]} 
+    />
+    <header class="mt-8 mb-12">
+      <div class="flex items-center gap-4 text-caption text-mute mb-6 font-mono">
+        <time datetime={date}>{new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+        <span>•</span>
+        <span>{author}</span>
+      </div>
+      <h1 class="text-display-lg md:text-display-xl font-semibold tracking-tight text-ink mb-6">{title}</h1>
+      <p class="text-body-lg text-body">{description}</p>
+    </header>
+    
+    <div class="prose prose-neutral max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-link hover:prose-a:text-link-deep prose-p:text-body dark:prose-invert">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

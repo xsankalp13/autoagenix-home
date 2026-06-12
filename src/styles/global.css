@@ -1,0 +1,237 @@
+@import "./theme.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-canvas-soft text-ink font-sans antialiased;
+    font-feature-settings: "ss01", "ss02";
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Premium mesh gradient — hero scale only */
+  .mesh-gradient {
+    background-image:
+      radial-gradient(at 20% 20%, rgba(0, 124, 240, 0.15) 0px, transparent 55%),
+      radial-gradient(at 80% 10%, rgba(121, 40, 202, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 60%, rgba(255, 0, 128, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 80%, rgba(80, 227, 194, 0.12) 0px, transparent 50%),
+      radial-gradient(at 60% 90%, rgba(249, 203, 40, 0.08) 0px, transparent 50%);
+    filter: blur(60px);
+  }
+
+  /* Subtle grid overlay */
+  .grid-overlay {
+    background-image:
+      linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* Trust badge check */
+  .trust-check::before {
+    content: "✓";
+    @apply text-success font-semibold mr-2;
+  }
+
+  /* Typography utilities as per DESIGN.md */
+  .text-display-xl {
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    letter-spacing: -2.4px;
+  }
+  .text-display-lg {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 40px;
+    letter-spacing: -1.28px;
+  }
+  .text-display-md {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: -0.96px;
+  }
+  .text-display-sm {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: -0.6px;
+  }
+  .text-body-lg {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+  }
+  .text-body-md {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+  .text-body-md-strong {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+  .text-body-sm {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+  .text-body-sm-strong {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+  .text-caption {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+  }
+  .text-caption-mono {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 16px;
+    @apply font-mono;
+  }
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+@keyframes flow-right {
+  0% { transform: translateX(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes counter-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Staggered delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+
+/* ─── Component Styles ───────────────────────────────────── */
+
+/* Tool card premium hover */
+.tool-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.08), 0px 12px 24px -8px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.08) inset;
+}
+
+/* Section scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* FAQ accordion */
+details summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+.faq-icon {
+  transition: transform 0.2s ease;
+}
+
+/* Flow animation for hero diagram */
+.flow-line {
+  stroke-dasharray: 6 4;
+  animation: flow-dash 1.5s linear infinite;
+}
+
+@keyframes flow-dash {
+  to { stroke-dashoffset: -20; }
+}
