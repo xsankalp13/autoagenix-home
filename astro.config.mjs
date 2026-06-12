@@ -1,10 +1,41 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
-import { categories, tools } from './src/data/tools.ts';
+import cloudflare from '@astrojs/cloudflare';
+import fs from 'node:fs';
+import path from 'node:path';
+import matter from 'gray-matter';
+
+function getEntries(dir) {
+  const p = path.resolve(dir);
+  if (!fs.existsSync(p)) return [];
+  return fs.readdirSync(p).filter(f => f.endsWith('.md')).map(file => {
+    const slug = file.replace(/\.md$/, '');
+    const c = fs.readFileSync(path.join(p, file), 'utf-8');
+    const { data } = matter(c);
+    return { slug, data };
+  });
+}
+
+const categories = getEntries('src/content/categories').map(e => ({
+  id: e.slug,
+  name: e.data.name,
+  description: e.data.description
+}));
+
+const tools = getEntries('src/content/tools').map(e => ({
+  id: e.slug,
+  name: e.data.name,
+  category: e.data.category,
+  path: `/${e.data.category}/${e.slug}`,
+  description: e.data.description,
+  featured: e.data.featured
+}));
 
 export default defineConfig({
   site: 'https://autoagenix.com',
+  output: 'static',
+  adapter: cloudflare(),
   integrations: [
     tailwind(),
     sitemap({

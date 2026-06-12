@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
 import ToolCard from '../../components/ToolCard.astro';
 import { tools } from '../../data/tools';
@@ -7,13 +7,13 @@ import { tools } from '../../data/tools';
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
   return blogEntries.map(entry => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 
 // Resolve related tools dynamically
 const explicitToolSlugs = (entry.data.relatedTools || []).map((ref: any) => ref.id);

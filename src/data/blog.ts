@@ -1,7 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import matter from 'gray-matter';
-
 export interface BlogPost {
   title: string;
   description: string;
@@ -12,19 +8,20 @@ export interface BlogPost {
   relatedTools: string[];
 }
 
+const allContentFiles = import.meta.glob('/src/content/**/*.md', { eager: true });
+
 function getEntriesFromDirectory(dirPath: string) {
-  const absolutePath = path.resolve(dirPath);
-  if (!fs.existsSync(absolutePath)) return [];
-  const files = fs.readdirSync(absolutePath);
-  return files
-    .filter(file => file.endsWith('.md'))
-    .map(file => {
-      const slug = file.replace(/\.md$/, '');
-      const filePath = path.join(absolutePath, file);
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const { data, content } = matter(fileContent);
-      return { slug, data, body: content.trim() };
-    });
+  const prefix = `/${dirPath}/`;
+  const entries = [];
+  for (const [filePath, module] of Object.entries(allContentFiles)) {
+    if (filePath.startsWith(prefix)) {
+      const slug = filePath.slice(prefix.length, -3); // remove prefix and .md
+      const data = (module as any).frontmatter || {};
+      const body = (module as any).rawContent ? (module as any).rawContent() : '';
+      entries.push({ slug, data, body });
+    }
+  }
+  return entries;
 }
 
 // Load blog posts from content collection directory
